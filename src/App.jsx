@@ -26,6 +26,10 @@ function App() {
     setTasks([...tasks, newTask]);
     setNewTaskTitle("");
   }
+  function handleDeleteTask(taskId) {
+    setTasks(tasks.filter((task) => task.id !== taskId));
+  }
+
   useEffect(() => {
     axios
       .get("https://jsonplaceholder.typicode.com/todos?_limit=5")
@@ -67,6 +71,7 @@ function App() {
               key={task.id}
               title={task.title}
               completed={task.completed}
+              onDelete={() => handleDeleteTask(task.id)}
             />
           ))}
         </div>
