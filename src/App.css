@@ -40,4 +40,9 @@
   color: white;
   cursor: pointer;
   font-weight: 600;
+}.error-message {
+  color: #b91c1c;
+  background: #fee2e2;
+  padding: 10px 14px;
+  border-radius: 6px;
 }

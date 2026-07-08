@@ -1,6 +1,8 @@
 import { useState } from "react";
 import TaskCard from "./components/TaskCard";
 import "./App.css";
+import axios from "axios";
+import { useEffect } from "react";
 
 function App() {
   const [tasks, setTasks] = useState([
@@ -10,6 +12,8 @@ function App() {
   ]);
 
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   function handleAddTask() {
     if (newTaskTitle.trim() === "") return;
 
@@ -22,6 +26,23 @@ function App() {
     setTasks([...tasks, newTask]);
     setNewTaskTitle("");
   }
+  useEffect(() => {
+    axios
+      .get("https://jsonplaceholder.typicode.com/todos?_limit=5")
+      .then((response) => {
+        const apiTasks = response.data.map((item) => ({
+          id: item.id,
+          title: item.title,
+          completed: item.completed,
+        }));
+        setTasks(apiTasks);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError("Görevler yüklenirken bir hata oluştu");
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <main className="app">
@@ -35,15 +56,21 @@ function App() {
         />
         <button onClick={handleAddTask}>Ekle</button>
       </div>
-      <div className="task-list">
-        {tasks.map((task) => (
-          <TaskCard
-            key={task.id}
-            title={task.title}
-            completed={task.completed}
-          />
-        ))}
-      </div>
+      {loading && <p>Görevler yükleniyor...</p>}
+
+      {error && <p className="error-message">{error}</p>}
+
+      {!loading && !error && (
+        <div className="task-list">
+          {tasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              title={task.title}
+              completed={task.completed}
+            />
+          ))}
+        </div>
+      )}
     </main>
   );
 }
